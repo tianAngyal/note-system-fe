@@ -1,0 +1,48 @@
+<app-navbar></app-navbar>
+<div class="flex h-[calc(100vh-3.5rem)]">
+  <nav class="bg-red-500 p-8 min-w-[20vw]">
+    <section class="filter-section">
+      <span class="example-list-section">
+        <mat-checkbox
+          [checked]="timeFilter()?.tickedAll"
+          [indeterminate]="partiallyComplete()"
+          (change)="update($event.checked)"
+        >
+          {{ timeFilter()?.name }}
+        </mat-checkbox>
+      </span>
+      <span class="example-list-section">
+        <ul>
+          @for (filter of timeFilter()?.tickedPartially; track filter; let i = $index) {
+            <li class="filter-margin">
+              <mat-checkbox [checked]="filter.completed" (change)="update($event.checked, i)">
+                {{ filter.name }}
+              </mat-checkbox>
+            </li>
+          }
+        </ul>
+      </span>
+    </section>
+  </nav>
+  <main class="bg-green-500 flex-1 h-full overflow-y-scroll">
+    @if (isLoggedIn()) {
+      <div>
+        <button matButton="elevated" class="m-[2rem] mb-0" (click)="openDialog()">
+          Create Note Group
+        </button>
+      </div>
+      <div class="grid grid-cols-[repeat(3,minmax(250px,1fr))] grid-rows-auto gap-4">
+        @for (group of filteredData(); track group.id) {
+          <app-group-notes
+            [group]="group"
+            (dialogEventListener)="onDialogEventListener($event)"
+          ></app-group-notes>
+        }
+      </div>
+    } @else {
+      <div class="flex items-center justify-center h-full">
+        <p class="text-xl">Please log in to view your notes.</p>
+      </div>
+    }
+  </main>
+</div>

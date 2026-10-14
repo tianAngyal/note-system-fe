@@ -1,0 +1,83 @@
+<mat-card id="mat-card">
+  <form [formGroup]="formModel" class="h-full" (submit)="onSubmit()">
+    <mat-card-header class="flex">
+      <!-- @if (this.data === null) { -->
+      <h1 style="font-size: 20px; font-weight: 500">
+        {{ data === null ? 'New Note Group' : 'Update Note Group' }}
+      </h1>
+      <!-- } -->
+      <div class="flex items-center w-full">
+        <div class="wrap-break-word flex w-full justify-center items-end">
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              formControlName="groupName"
+              placeholder="Enter group name"
+              class="h-8 text-[16px]"
+              style="font-size: 18px; font-weight: 500"
+            />
+            <mat-error class="text-[14px]">
+              @if (groupName?.errors?.['required']) {
+                Group name is required
+              }
+            </mat-error>
+          </mat-form-field>
+
+          <button type="button" matButton="filled" cdkFocusInitial (click)="handleAddNoteField()">
+            <mat-icon>add</mat-icon>
+            note
+          </button>
+        </div>
+      </div>
+    </mat-card-header>
+    <mat-dialog-content>
+      @if (notes.length !== 0) {
+        <div formArrayName="notes">
+          @for (note of notes; track index; let index = $index) {
+            <div class="flex items-baseline">
+              <mat-form-field>
+                <input
+                  matInput
+                  #inputRef
+                  type="text"
+                  [formControlName]="index"
+                  [placeholder]="note.content || 'Note content'"
+                />
+                <mat-error>Note content is required</mat-error>
+              </mat-form-field>
+              <button
+                matIconButton
+                type="button"
+                aria-label="Example icon button with a delete icon"
+                (click)="deleteNoteRow(index)"
+              >
+                <mat-icon style="color: red">delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <div class="flex justify-between w-full">
+        @if (data !== null) {
+          <button
+            id="delete-group-note-btn"
+            matButton="filled"
+            type="button"
+            aria-label="Example icon button with a delete icon"
+            (click)="handleDeleteNoteGroup(data)"
+          >
+            <mat-icon style="color: red">delete</mat-icon>
+            <span style="color: red"> delete note group </span>
+          </button>
+        }
+        <div class="flex justify-end" [style.width]="data !== null ? '' : '100%'">
+          <button type="button" mat-button (click)="closeDialog(false)">Cancel</button>
+          <button mat-button>{{ data === null ? 'Create' : 'Update' }}</button>
+        </div>
+      </div>
+    </mat-dialog-actions>
+  </form>
+</mat-card>

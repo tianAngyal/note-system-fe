@@ -1,0 +1,25 @@
+<mat-card class="example-card w-[500px] p-6" appearance="outlined">
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="w-full mb-4">
+      <input matInput formControlName="uname" placeholder="user1" value="user1" />
+      <mat-error *ngIf="form.get('uname')?.hasError('required')">
+        Menu musí byť vyplnené
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full mb-4">
+      <input
+        matInput
+        type="password"
+        formControlName="password"
+        placeholder="password1"
+        value="'password1'"
+      />
+      <mat-error *ngIf="form.get('password')?.hasError('required')">
+        Heslo musí byť vyplnené
+      </mat-error>
+    </mat-form-field>
+
+    <button matButton="elevated" (click)="onSubmit($event)" class="w-full">Prihlásiť sa</button>
+  </form>
+</mat-card>

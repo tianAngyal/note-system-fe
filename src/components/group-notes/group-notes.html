@@ -1,0 +1,25 @@
+<!-- w-[250px] min-h-[250px] h-auto -->
+
+<mat-card class="m-4 h-[40vh] max-h-[40vh] overflow-y-hidden" appearance="outlined">
+  <mat-card-header>
+    <div class="flex w-full justify-between items-baseline border-b-2 border-blue-300">
+      <h1 class="text-xl mb-4">{{ group.name }}</h1>
+      <button matMiniFab (click)="handleOpenEditDialogWindow(group.id!)">
+        <mat-icon>edit_square</mat-icon>
+      </button>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content class="h-full overflow-y-scroll">
+    <div class="flex flex-col gap-4 ps-0 p-8">
+      @for (note of group.notes; track note.id) {
+        <div class="">
+          {{ note.content }}
+        </div>
+      }
+    </div>
+  </mat-card-content>
+  <mat-card-footer class="">
+    <span class="text-gray-400 text-[12px]">{{ group.createdAt }}</span>
+  </mat-card-footer>
+</mat-card>

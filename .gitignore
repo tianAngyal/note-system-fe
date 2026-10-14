@@ -1,0 +1,23 @@
+# Závislosti
+node_modules/
+
+# Build výstup a cache Angularu
+dist/
+.angular/
+
+# Systémové súbory
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Logy
+npm-debug.log*
+*.log
+
+# Lokálne env súbory
+.env
+.env.*
