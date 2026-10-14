@@ -11,7 +11,7 @@ import { inject, Injectable } from '@angular/core';
 import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
 import { Auth } from '../entities/auth';
 import { MessageService } from './message-service';
-import { environment } from '../environment/environment.development';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +49,7 @@ export class UserManagement {
    * 4. Zobrazí sa success message
    */
   login(auth: Auth): Observable<boolean> {
-    return this.http.post(`${this.url}api/auth/login`, auth, { responseType: 'text' }).pipe(
+    return this.http.post(`${this.url}/auth/login`, auth, { responseType: 'text' }).pipe(
       tap((token) => {
         this.token = token; // Ulož token
       }),
@@ -68,7 +68,7 @@ export class UserManagement {
    * 3. Zobrazí sa success message
    */
   logout(): Observable<boolean> {
-    return this.http.get(`${this.url}api/auth/logout/${this.token}`).pipe(
+    return this.http.get(`${this.url}/auth/logout/${this.token}`).pipe(
       map(() => {
         console.log('Logout successful on server, token removed from client');
         this.token = ''; // Vymaž token
@@ -99,10 +99,7 @@ export class UserManagement {
       }
       if (err.status >= 400 && err.status < 500) {
         console.log(err);
-        let parsed = JSON.parse(err.error);
-        const msg = parsed.error;
-        // console.log(msg);
-        this.messageService.printError(msg);
+        this.messageService.printError(this.extractErrorMessage(err));
         return EMPTY;
       }
       if (err.status >= 500) {
@@ -111,5 +108,29 @@ export class UserManagement {
     }
     console.error(err);
     return EMPTY;
+  }
+
+  /**
+   * Získa text chyby z odpovede servera
+   * err.error môže byť null/prázdny (napr. 403 zo Spring Security nemá telo),
+   * string (JSON alebo obyčajný text) alebo už rozparsovaný objekt
+   */
+  private extractErrorMessage(err: HttpErrorResponse): string {
+    let body = err.error;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        // Nie je to JSON - použijeme text tak, ako je
+        if (body.trim()) return body;
+      }
+    }
+    if (body?.error) return body.error;
+    if (body?.message) return body.message;
+
+    if (err.status === 401) return 'You are not logged in';
+    if (err.status === 403) return 'Access denied';
+    if (err.status === 404) return 'Not found';
+    return `Request failed. Status code ${err.status}`;
   }
 }

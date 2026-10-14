@@ -15,9 +15,10 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { Note } from '../entities/Notes/Note';
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { environment } from '../environment/environment.development';
+
 import { NoteGroup } from '../entities/NoteGroup/NoteGroup';
 import { UserManagement } from './user-management';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +37,7 @@ export class DashboardService {
    * Vyžaduje platný JWT token!
    */
   getDashboardData(): Observable<NoteGroup[]> {
-    return this.http.get<NoteGroup[]>(`${this.url}api/note-groups`).pipe(
+    return this.http.get<NoteGroup[]>(`${this.url}/note-groups`).pipe(
       map((jsonNoteGroups) => {
         return jsonNoteGroups.map((noteGroup) => NoteGroup.clone(noteGroup));
       }),
@@ -53,7 +54,7 @@ export class DashboardService {
   }
 
   getIndividualNoteGroup(id: number): Observable<NoteGroup> {
-    return this.http.get<NoteGroup>(`${this.url}api/note-groups/${id}`).pipe(
+    return this.http.get<NoteGroup>(`${this.url}/note-groups/${id}`).pipe(
       map((jsonNoteGroup) => {
         return NoteGroup.clone(jsonNoteGroup);
       }),
@@ -75,7 +76,7 @@ export class DashboardService {
    */
   updateIndividualNote(note: Note): Observable<any> {
     console.log(note);
-    return this.http.patch(`${this.url}api/note/${note.id}`, note).pipe(
+    return this.http.patch(`${this.url}/note/${note.id}`, note).pipe(
       map((objects) => {
         console.log(objects);
         return objects;
@@ -91,7 +92,7 @@ export class DashboardService {
   }
 
   updateNoteGroup(noteGroup: NoteGroup): Observable<NoteGroup> {
-    return this.http.patch<NoteGroup>(`${this.url}api/note-groups/`, noteGroup).pipe(
+    return this.http.patch<NoteGroup>(`${this.url}/note-groups/`, noteGroup).pipe(
       map((object) => {
         console.log(object);
         return object;
@@ -112,7 +113,7 @@ export class DashboardService {
    * Vyžaduje platný JWT token!
    */
   removeIndividualNote(noteId: number): Observable<any> {
-    return this.http.delete(`${this.url}api/note/${noteId}`).pipe(
+    return this.http.delete(`${this.url}/note/${noteId}`).pipe(
       catchError((error) => {
         // if (error.status === 401) {
         //   localStorage.removeItem('authToken');
@@ -135,7 +136,7 @@ export class DashboardService {
     //   name: name,
     //   notes: notes || [], // Ak notes nie je poskytnuté, pošle prázdne pole
     // };
-    return this.http.post(`${this.url}api/note-groups/`, noteGroup).pipe(
+    return this.http.post(`${this.url}/note-groups/`, noteGroup).pipe(
       catchError((error) => {
         if (error.status === 401) {
           localStorage.removeItem('authToken');
@@ -153,7 +154,7 @@ export class DashboardService {
    */
   renameNoteGroup(groupId: number, newName: string): Observable<any> {
     const body = { name: newName };
-    return this.http.patch(`${this.url}api/note-groups/${groupId}`, body).pipe(
+    return this.http.patch(`${this.url}/note-groups/${groupId}`, body).pipe(
       catchError((error) => {
         if (error.status === 401) {
           localStorage.removeItem('authToken');
@@ -166,7 +167,7 @@ export class DashboardService {
   }
 
   deleteNoteGroup(noteGroup: NoteGroup): Observable<NoteGroup> {
-    return this.http.delete<NoteGroup>(`${this.url}api/note-groups/?id=${noteGroup.id}`).pipe(
+    return this.http.delete<NoteGroup>(`${this.url}/note-groups/?id=${noteGroup.id}`).pipe(
       map((object) => {
         console.log(object);
         return object;
@@ -187,7 +188,7 @@ export class DashboardService {
    * @param note Poznámka na pridanie
    */
   addNoteToGroup(groupId: number, note: Note): Observable<any> {
-    return this.http.post(`${this.url}api/note-groups/${groupId}/notes`, note).pipe(
+    return this.http.post(`${this.url}/note-groups/${groupId}/notes`, note).pipe(
       catchError((error) => {
         if (error.status === 401) {
           localStorage.removeItem('authToken');
@@ -199,7 +200,7 @@ export class DashboardService {
   }
 
   getTimeStampFilter(): Observable<any> {
-    return this.http.get<any>(`${this.url}api/note-groups/unique-creation-dates`).pipe(
+    return this.http.get<any>(`${this.url}/note-groups/unique-creation-dates`).pipe(
       map((result) => {
         // console.log(result);
         return result;
